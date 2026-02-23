@@ -53,7 +53,7 @@ public class SecurityConfig {
         // .authenticated() 는 로그인 한 사용자만 허용
         http.authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/login", "/user/signup").permitAll()
+                        .requestMatchers("/user/login", "/login", "/user/signup").permitAll()
                         .requestMatchers("/test/ex01").permitAll()
                         .requestMatchers("/test/ex02").authenticated()
                         .requestMatchers("/test/ex03").hasRole("USER")

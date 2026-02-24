@@ -36,4 +36,26 @@ public class UserDto {
                     .build();
         }
     }
+
+    @Getter
+    public static class LoginReq {
+        private String email;
+        private String password;
+    }
+
+    @Builder
+    @Getter
+    public static class LoginRes {
+        private Long idx;
+        private String email;
+        private String name;
+
+        public static LoginRes from(User entity) {
+            return LoginRes.builder()
+                    .idx(entity.getIdx())
+                    .email(entity.getEmail())
+                    .name(entity.getName())
+                    .build();
+        }
+    }
 }

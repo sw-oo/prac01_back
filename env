@@ -1,0 +1,7 @@
+MAIL_ID=kokodd1234@gmail.com
+MAIL_PW=cerjivgqzrfryxfo
+JWT_SECRET=sdfkhgsdkglnhoiurjdfoihgh397478thgwr390289gyrfhp90823uoevbdo823uvh4tf
+JWT_EXPIRE=300000
+DB_URL=jdbc:mariadb://10.10.10.30:3306/test04
+DB_ID=root
+DB_PW=qwer1234

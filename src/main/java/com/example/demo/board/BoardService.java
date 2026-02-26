@@ -1,19 +1,28 @@
 package com.example.demo.board;
 
 import com.example.demo.board.model.Board;
+import com.example.demo.common.exception.BaseException;
+import com.example.demo.common.model.BaseResponse;
+import com.example.demo.common.model.BaseResponseStatus;
+import com.example.demo.user.UserRepository;
+import com.example.demo.user.model.User;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.board.model.BoardDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.demo.common.model.BaseResponseStatus.SIGNUP_INVALID_UUID;
+
 @RequiredArgsConstructor
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
-    public BoardDto.RegRes register(BoardDto.RegReq dto) {
-        Board entity = boardRepository.save(dto.toEntity());
+    public BoardDto.RegRes register(BoardDto.RegReq dto, Long idx) {
+        User user = userRepository.findById(idx).orElseThrow(() -> BaseException.from(SIGNUP_INVALID_UUID));
+        Board entity = boardRepository.save(dto.toEntity(user));
 
         return BoardDto.RegRes.from(entity);
     }

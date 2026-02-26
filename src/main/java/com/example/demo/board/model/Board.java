@@ -1,6 +1,7 @@
 package com.example.demo.board.model;
 
 import com.example.demo.common.model.BaseEntity;
+import com.example.demo.likes.model.Likes;
 import com.example.demo.relation.model.A;
 import com.example.demo.reply.model.Reply;
 import com.example.demo.user.model.User;
@@ -35,4 +36,7 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<Reply> replyList;
+
+    @OneToMany(mappedBy = "board", fetch=FetchType.LAZY)
+    private List<Likes> likesList;
 }

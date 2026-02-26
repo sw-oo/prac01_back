@@ -5,3 +5,4 @@ JWT_EXPIRE=300000
 DB_URL=jdbc:mariadb://10.10.10.30:3306/test04
 DB_ID=root
 DB_PW=qwer1234
+UPLOAD_PATH=C:\BEYOND24\upload

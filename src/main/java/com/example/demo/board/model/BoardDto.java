@@ -1,5 +1,6 @@
 package com.example.demo.board.model;
 
+import com.example.demo.likes.model.LikesDto;
 import com.example.demo.reply.model.Reply;
 import com.example.demo.reply.model.ReplyDto;
 import com.example.demo.user.model.UserDto;
@@ -45,6 +46,7 @@ public class BoardDto {
         private String contents;
         private String writer;
         private List<ReplyDto.ReadRes> replyList;
+        private List<LikesDto.ReadRes> likesList;
 
         public static ListRes from(Board entity) {
             return ListRes.builder()
@@ -53,6 +55,7 @@ public class BoardDto {
                     .contents(entity.getContents())
                     .writer(entity.getUser().getName())
                     .replyList(entity.getReplyList().stream().map(ReplyDto.ReadRes::from).toList())
+                    .likesList(entity.getLikesList().stream().map(LikesDto.ReadRes::from).toList())
                     .build();
         }
     }
@@ -65,6 +68,7 @@ public class BoardDto {
         private String contents;
         private String writer;
         private List<ReplyDto.ListRes> replyList;
+        private List<LikesDto.ReadRes> likesList;
 
         public static ReadRes from(Board entity) {
             return ReadRes.builder()
@@ -73,6 +77,7 @@ public class BoardDto {
                     .contents(entity.getContents())
                     .writer(entity.getUser().getName())
                     .replyList(entity.getReplyList().stream().map(ReplyDto.ListRes::from).toList())
+                    .likesList(entity.getLikesList().stream().map(LikesDto.ReadRes::from).toList())
                     .build();
         }
     }

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Service
 public interface UploadService {
-    List<String> upload(List<MultipartFile> file);
+    List<String> upload(List<MultipartFile> fileList);
 }

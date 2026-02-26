@@ -1,21 +1,16 @@
-package com.example.demo.board.model;
+package com.example.demo.reply.model;
 
-import com.example.demo.reply.model.Reply;
-import com.example.demo.reply.model.ReplyDto;
-import com.example.demo.user.model.UserDto;
-import lombok.*;
+import com.example.demo.board.model.Board;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.util.List;
-
-public class BoardDto {
+public class ReplyDto {
     @Getter
     public static class RegReq {
-        private String title;
         private String contents;
 
-        public Board toEntity() {
-            return Board.builder()
-                    .title(this.title)
+        public Reply toEntity() {
+            return Reply.builder()
                     .contents(this.contents)
                     .build();
         }
@@ -25,13 +20,11 @@ public class BoardDto {
     @Getter
     public static class RegRes {
         private Long idx;
-        private String title;
         private String contents;
 
-        public static RegRes from(Board entity) {
+        public static RegRes from(Reply entity) {
             return RegRes.builder()
                     .idx(entity.getIdx())
-                    .title(entity.getTitle())
                     .contents(entity.getContents())
                     .build();
         }
@@ -41,18 +34,16 @@ public class BoardDto {
     @Getter
     public static class ListRes {
         private Long idx;
-        private String title;
         private String contents;
+        private Long boardIdx;
         private String writer;
-        private List<ReplyDto.ReadRes> replyList;
 
-        public static ListRes from(Board entity) {
+        public static ListRes from(Reply entity) {
             return ListRes.builder()
                     .idx(entity.getIdx())
-                    .title(entity.getTitle())
                     .contents(entity.getContents())
+                    .boardIdx(entity.getBoard().getIdx())
                     .writer(entity.getUser().getName())
-                    .replyList(entity.getReplyList().stream().map(ReplyDto.ReadRes::from).toList())
                     .build();
         }
     }
@@ -61,18 +52,16 @@ public class BoardDto {
     @Getter
     public static class ReadRes {
         private Long idx;
-        private String title;
         private String contents;
+        private Long boardIdx;
         private String writer;
-        private List<ReplyDto.ListRes> replyList;
 
-        public static ReadRes from(Board entity) {
+        public static ReadRes from(Reply entity) {
             return ReadRes.builder()
                     .idx(entity.getIdx())
-                    .title(entity.getTitle())
                     .contents(entity.getContents())
+                    .boardIdx(entity.getBoard().getIdx())
                     .writer(entity.getUser().getName())
-                    .replyList(entity.getReplyList().stream().map(ReplyDto.ListRes::from).toList())
                     .build();
         }
     }

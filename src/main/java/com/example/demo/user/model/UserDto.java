@@ -1,7 +1,11 @@
 package com.example.demo.user.model;
 
+import com.example.demo.board.model.Board;
+import com.example.demo.board.model.BoardDto;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 public class UserDto {
 
@@ -54,6 +58,22 @@ public class UserDto {
 
         public static LoginRes from(User entity) {
             return LoginRes.builder()
+                    .idx(entity.getIdx())
+                    .email(entity.getEmail())
+                    .name(entity.getName())
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    public static class Res {
+        private Long idx;
+        private String email;
+        private String name;
+
+        public static Res from(User entity) {
+            return Res.builder()
                     .idx(entity.getIdx())
                     .email(entity.getEmail())
                     .name(entity.getName())

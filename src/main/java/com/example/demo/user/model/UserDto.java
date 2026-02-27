@@ -2,6 +2,7 @@ package com.example.demo.user.model;
 
 import com.example.demo.board.model.Board;
 import com.example.demo.board.model.BoardDto;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public class UserDto {
 
     @Getter
     public static class SignupReq {
+        @Pattern(message = "이메일 형식이 아님", regexp = "^[0-9a-zA-z._%+-]+@[0-9a-zA-z._%+-]+\\.[a-zA-Z]{2,}$")
         private String email;
         private String name;
         private String password;
@@ -21,7 +23,6 @@ public class UserDto {
                     .name(this.name)
                     .password(this.password)
                     .enable(false)
-                    .role("ROLE_USER")
                     .build();
         }
     }

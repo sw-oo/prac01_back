@@ -18,6 +18,9 @@ public enum BaseResponseStatus {
     LOGIN_INVALID_USERINFO(false, 3006, "유효하지않는 ~입니다."),
     REPLY_INVALID(false, 3007, "댓글이 유효하지 않습니다."),
     BOARD_INVAILD_ID(false, 3008, "게시글 정보가 유효하지 않습니다."),
+
+    // 4000번대
+    REQUEST_ERROR(false, 4000, "요청 에러 발생"),
     // 5000번대 실패
     FAIL(false, 5000, "요청이 실패했습니다");
 

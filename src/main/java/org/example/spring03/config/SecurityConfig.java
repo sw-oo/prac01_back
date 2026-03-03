@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package org.example.spring03.config;
 
 /*
 기존 스프링 시큐리티의 로그인 처리 방식
@@ -20,25 +20,20 @@ package com.example.demo.config;
 응답 바꾸기 : UsernamePasswordAuthenticationFilter의 successfulAuthentication 메소드 재정의
 */
 
-import com.example.demo.config.filter.JwtFilter;
-import com.example.demo.config.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.example.demo.config.oauth2.OAuth2AuthorizationRequestRepository;
-import com.example.demo.user.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Service;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -47,44 +42,12 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
+    private final AuthenticationConfiguration configuration;
+    private final LoginFilter loginFilter;
     private final JwtFilter jwtFilter;
-    private final OAuth2UserService oAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthorizationRequestRepository oAuth2AuthorizationRequestRepository;
-    @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.oauth2Login(config -> {
-            config.authorizationEndpoint(endpoint ->
-                    endpoint.authorizationRequestRepository(oAuth2AuthorizationRequestRepository)
-            );
-            config.userInfoEndpoint(
-                    endpoint ->
-                            endpoint.userService(oAuth2UserService)
-            );
-            config.successHandler(oAuth2AuthenticationSuccessHandler);
-        });
-
-        http.authorizeHttpRequests(
-                (auth) -> auth
-                        .requestMatchers("/user/login", "/user/signup", "/user/verify").permitAll()
-                        .requestMatchers("/board/reg").authenticated()
-//                        .anyRequest().authenticated()
-                        .anyRequest().permitAll()
-        );
-
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.httpBasic(AbstractHttpConfigurer::disable);
-        http.formLogin(AbstractHttpConfigurer::disable);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -99,14 +62,36 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+
+    @Bean // 개발자가 직접 개발한 코드가 아닌 클래스의 객체를 스프링의 빈으로 등록하려고 할 때 사용
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        // 특정 URI로 접속했을 때 권한 설정하는 부분
+        // .permitAll() 전부 허용
+        // .hasRole("ADMIN") AuthUserDetails 객체에서 ROLE_ADMIN 권한을 가진 사용자만 허용
+        // .authenticated() 는 로그인 한 사용자만 허용
+        http.authorizeHttpRequests(
+                (auth) -> auth
+                        .requestMatchers("/user/verify", "/user/login", "/login", "/user/signup").permitAll()
+                        .requestMatchers("/test/ex01").permitAll()
+                        .requestMatchers("/test/ex02").authenticated()
+                        .requestMatchers("/test/ex03").hasRole("USER")
+                        .requestMatchers("/test/ex04").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+        );
+
+        // CSRF 방어 기능을 중지하는 코드
+        http.csrf(AbstractHttpConfigurer::disable);
+        // basic 로그인 방식 사용 안하도록 설정
+        http.httpBasic(AbstractHttpConfigurer::disable);
+        // form 로그인 방식 사용 안하도록 설정
+        http.formLogin(AbstractHttpConfigurer::disable);
+
+        // 기존 필터 대신에 내가 구현한 필터로 교체
+        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }
